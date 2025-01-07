@@ -1,5 +1,6 @@
 document.getElementById("generate-btn").addEventListener("click", () => {
     // Récupération des valeurs du formulaire
+    // const doc = new window.jspdf.jsPDF();
     const name = document.getElementById("name").value;
     const email = document.getElementById("email").value;
     const phone = document.getElementById("phone").value;
@@ -19,23 +20,32 @@ document.getElementById("generate-btn").addEventListener("click", () => {
       <p>${experience}</p>
       <h4>Formation</h4>
       <p>${education}</p>
-    `;
+    `
+    ;
+
   
     // Affichage du CV
     document.getElementById("form-section").style.display = "none";
     document.getElementById("cv-section").style.display = "block";
   });
-  
-  // Téléchargement du CV en HTML
-  document.getElementById("download-btn").addEventListener("click", () => {
-    const cvContent = document.getElementById("cv-container").innerHTML;
-    // Crée un Blob contenant le code HTML
-    const blob = new Blob([cvContent], { type: "text/html" });
 
-    // Crée un lien de téléchargement temporaire
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "cv.html"; // Nom du fichier
-    link.click(); // Déclenche le téléchargement
-  });
-  
+  document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("download-btn").addEventListener("click", async () => {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+
+        const cvContent = document.getElementById("cv-container");
+
+        // Utilisation directe de doc.html() pour convertir le contenu HTML en PDF
+        await doc.html(cvContent, {
+            callback: function (doc) {
+                doc.save("cv.pdf");
+            },
+            x: 10,
+            y: 10,
+            width: 180, // Ajuste la largeur pour tenir sur la page A4
+            windowWidth: cvContent.scrollWidth // Utilise la largeur réelle du contenu
+        });
+    });
+});
+
